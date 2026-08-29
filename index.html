@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lade Wedding App...</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; padding-top: 50px; color: #333; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <p>Verbindung zur Wedding App wird hergestellt...</p>
+
+    <script>
+        (function() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+            // Konfiguration - Ersetze diese Links mit deinen Daten:
+            var appScheme = "weddingphotoapp://upload"; 
+            var testFlightUrl = "https://apple.com"; 
+            var gitHubUrl = "https://github.com/lucashoeglinger/WeddingPhotoApp/releases/tag/Android"; 
+
+            // 1. ANDROID ROUTING
+            if (/android/i.test(userAgent)) {
+                // Versucht die App über das Custom Scheme zu öffnen
+                window.location.href = appScheme;
+                
+                // Falls die App nicht existiert, nach 1,5 Sekunden zu GitHub weiterleiten
+                setTimeout(function() {
+                    window.location.href = gitHubUrl;
+                }, 1500);
+            } 
+            
+            // 2. iOS ROUTING (iPhone / iPad)
+            else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                // Versucht die iOS App direkt zu öffnen
+                window.location.href = appScheme;
+                
+                // Falls die App nicht existiert, nach 1,5 Sekunden zu TestFlight weiterleiten
+                setTimeout(function() {
+                    window.location.href = testFlightUrl;
+                }, 1500);
+            } 
+            
+            // 3. FALLBACK (PC / Mac / andere Geräte)
+            else {
+                window.location.href = gitHubUrl;
+            }
+        })();
+    </script>
+</body>
+</html>
