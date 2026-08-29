@@ -12,43 +12,46 @@
 </head>
 <body>
     <div class="loader"></div>
-    <p>Verbindung zur Wedding App wird hergestellt...</p>
+        <p>Verbindung zur Wedding App wird hergestellt...</p>
+    </div>
 
     <script>
         (function() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            var urlParams = new URLSearchParams(window.location.search);
+            var currentPassword = urlParams.get('code');
             
-            // Konfiguration - Ersetze diese Links mit deinen Daten:
-            var appScheme = "weddingphotoapp://upload"; 
+            if (currentPassword) {
+                localStorage.setItem('wedding_password', currentPassword);
+            } else {
+                currentPassword = localStorage.getItem('wedding_password') || '';
+            }
+
+            if (currentPassword) {
+                document.getElementById('display-password').innerText = currentPassword;
+            }
+            
+            var baseScheme = "weddingapp://auth"; 
             var testFlightUrl = "https://apple.com"; 
             var gitHubUrl = "https://github.com/lucashoeglinger/WeddingPhotoApp/releases/tag/Android"; 
 
-            // 1. ANDROID ROUTING
-            if (/android/i.test(userAgent)) {
-                // Versucht die App über das Custom Scheme zu öffnen
-                window.location.href = appScheme;
+            var appScheme = currentPassword ? baseScheme + "?code=" + encodeURIComponent(currentPassword) : baseScheme;
+
+            window.location.href = appScheme;
+            
+            setTimeout(function() {
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('fallback-state').classList.remove('hidden');
                 
-                // Falls die App nicht existiert, nach 1,5 Sekunden zu GitHub weiterleiten
-                setTimeout(function() {
+                if (/android/i.test(userAgent)) {
                     window.location.href = gitHubUrl;
-                }, 1500);
-            } 
-            
-            // 2. iOS ROUTING (iPhone / iPad)
-            else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                // Versucht die iOS App direkt zu öffnen
-                window.location.href = appScheme;
-                
-                // Falls die App nicht existiert, nach 1,5 Sekunden zu TestFlight weiterleiten
-                setTimeout(function() {
+                } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
                     window.location.href = testFlightUrl;
-                }, 1500);
-            } 
-            
-            // 3. FALLBACK (PC / Mac / andere Geräte)
-            else {
-                window.location.href = gitHubUrl;
-            }
+                } else {
+                    window.location.href = gitHubUrl;
+                }
+            }, 1500);
         })();
     </script>
 </body>
