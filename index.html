@@ -18,40 +18,30 @@
     <script>
         (function() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-            var urlParams = new URLSearchParams(window.location.search);
-            var currentPassword = urlParams.get('code');
             
-            if (currentPassword) {
-                localStorage.setItem('wedding_password', currentPassword);
-            } else {
-                currentPassword = localStorage.getItem('wedding_password') || '';
-            }
-
-            if (currentPassword) {
-                document.getElementById('display-password').innerText = currentPassword;
-            }
-            
-            var baseScheme = "weddingapp://auth"; 
+            var appScheme = "weddingapp://auth?code=MA2026WEDDING"; 
             var testFlightUrl = "https://apple.com"; 
             var gitHubUrl = "https://github.com/lucashoeglinger/WeddingPhotoApp/releases/tag/Android"; 
 
-            var appScheme = currentPassword ? baseScheme + "?code=" + encodeURIComponent(currentPassword) : baseScheme;
-
-            window.location.href = appScheme;
-            
-            setTimeout(function() {
-                document.getElementById('loading-state').classList.add('hidden');
-                document.getElementById('fallback-state').classList.remove('hidden');
+            if (/android/i.test(userAgent)) {
+                window.location.href = appScheme;
                 
-                if (/android/i.test(userAgent)) {
+                setTimeout(function() {
                     window.location.href = gitHubUrl;
-                } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                }, 1500);
+            } 
+            
+            else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                window.location.href = appScheme;
+                
+                setTimeout(function() {
                     window.location.href = testFlightUrl;
-                } else {
-                    window.location.href = gitHubUrl;
-                }
-            }, 1500);
+                }, 1500);
+            } 
+            
+            else {
+                window.location.href = gitHubUrl;
+            }
         })();
     </script>
 </body>
