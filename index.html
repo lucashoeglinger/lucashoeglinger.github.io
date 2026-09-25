@@ -16,33 +16,38 @@
     </div>
 
     <script>
-        (function() {
-            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            
-            var appScheme = "weddingapp://auth?code=MA2026WEDDING"; 
-            var testFlightUrl = "https://github.com/lucashoeglinger/WeddingPhotoApp/releases/tag/v1-ios"; 
-            var gitHubUrl = "https://github.com/lucashoeglinger/WeddingPhotoApp/releases/tag/Android"; 
+       (function() {
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    
+    var appScheme = "weddingapp://auth?code=MA2026WEDDING"; 
+    var testFlightUrl = "https://github.com/lucashoeglinger/WeddingPhotoApp/releases/tag/v1-ios"; 
+    var gitHubUrl = "https://github.com/lucashoeglinger/WeddingPhotoApp/releases/tag/Android"; 
 
-            if (/android/i.test(userAgent)) {
-                window.location.href = appScheme;
-                
-                setTimeout(function() {
-                    window.location.href = gitHubUrl;
-                }, 1500);
-            } 
-            
-            else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                window.location.href = appScheme;
-                
-                setTimeout(function() {
-                    window.location.href = testFlightUrl;
-                }, 1500);
-            } 
-            
-            else {
-                window.location.href = gitHubUrl;
-            }
-        })();
+    var isAndroid = /android/i.test(userAgent);
+    var isIOS = /iPad|iPhone|iPod/.test(userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (isAndroid) {
+        window.location.href = appScheme;
+        setTimeout(function() {
+            window.location.href = gitHubUrl;
+        }, 1500);
+    } else if (isIOS) {
+        window.location.href = appScheme;
+        setTimeout(function() {
+            window.location.href = testFlightUrl;
+        }, 1500);
+    } else {
+        // Desktop / unrecognized device
+        // Redirect to a landing page or prompt user instead of assuming Android:
+        document.body.innerHTML = `
+            <h2>Wedding App</h2>
+            <p>Please open this link on your mobile phone or choose a download:</p>
+            <p><a href="${testFlightUrl}">Download for iOS</a></p>
+            <p><a href="${gitHubUrl}">Download for Android</a></p>
+        `;
+    }
+})();
     </script>
 </body>
 </html>
